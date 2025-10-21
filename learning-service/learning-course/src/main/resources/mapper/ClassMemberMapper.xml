@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.linter.learning.course.dao.ClassMemberDao">
+
+    <!-- 基礎結果映射 -->
+    <resultMap id="BaseResultMap" type="cn.linter.learning.course.entity.ClassMember">
+        <id column="id" property="id"/>
+        <result column="class_id" property="classId"/>
+        <result column="user_name" property="userName"/>
+        <result column="join_time" property="joinTime"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="updater" property="updater"/>
+    </resultMap>
+
+
+    <!-- 通過ID查詢 -->
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT id, class_id, user_name, join_time, status, create_time, update_time, creator, updater
+        FROM class_member
+        WHERE id = #{id}
+    </select>
+
+    <!-- 通過班級ID查詢所有成員 -->
+    <select id="listByClassId" resultMap="BaseResultMap">
+        SELECT id, class_id, user_name, join_time, status, create_time, update_time, creator, updater
+        FROM class_member
+        WHERE class_id = #{classId} AND status = 1
+        ORDER BY join_time DESC
+    </select>
+
+    <!-- 通過用戶名查詢加入的班級 -->
+    <select id="listByUserName" resultMap="BaseResultMap">
+        SELECT id, class_id, user_name, join_time, status, create_time, update_time, creator, updater
+        FROM class_member
+        WHERE user_name = #{userName} AND status = 1
+        ORDER BY join_time DESC
+    </select>
+
+    <!-- 查詢用戶是否已加入班級 -->
+    <select id="selectByClassIdAndUserName" resultMap="BaseResultMap">
+        SELECT id, class_id, user_name, join_time, status, create_time, update_time, creator, updater
+        FROM class_member
+        WHERE class_id = #{classId} AND user_name = #{userName}
+    </select>
+
+    <!-- 統計班級成員數量 -->
+    <select id="countByClassId" resultType="int">
+        SELECT COUNT(*)
+        FROM class_member
+        WHERE class_id = #{classId} AND status = 1
+    </select>
+
+    <!-- 新增班級成員 -->
+    <insert id="insert" parameterType="cn.linter.learning.course.entity.ClassMember" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO class_member (class_id, user_name, join_time, status, create_time, update_time, creator, updater)
+        VALUES (#{classId}, #{userName}, #{joinTime}, #{status}, #{createTime}, #{updateTime}, #{creator}, #{updater})
+    </insert>
+
+    <!-- 更新班級成員 -->
+    <update id="update" parameterType="cn.linter.learning.course.entity.ClassMember">
+        UPDATE class_member
+        SET class_id = #{classId},
+            user_name = #{userName},
+            join_time = #{joinTime},
+            status = #{status},
+            update_time = #{updateTime},
+            updater = #{updater}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 刪除班級成員 -->
+    <delete id="delete">
+        DELETE FROM class_member WHERE id = #{id}
+    </delete>
+
+    <!-- 用戶退出班級 -->
+    <update id="exitClass">
+        UPDATE class_member
+        SET status = 0,
+            update_time = NOW(),
+            updater = #{userName}
+        WHERE class_id = #{classId} AND user_name = #{userName} AND status = 1
+    </update>
+
+</mapper>

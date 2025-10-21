@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.linter.learning.course.dao.ClassQuizDao">
+
+    <resultMap id="BaseResultMap" type="cn.linter.learning.course.entity.ClassQuiz">
+        <id column="id" property="id"/>
+        <result column="class_id" property="classId"/>
+        <result column="title" property="title"/>
+        <result column="description" property="description"/>
+        <result column="question_count" property="questionCount"/>
+        <result column="duration" property="duration"/>
+        <result column="attempt_count" property="attemptCount"/>
+        <result column="enabled" property="enabled"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="updater" property="updater"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, class_id, title, description, question_count, duration, attempt_count, enabled, create_time, update_time, creator, updater
+    </sql>
+
+    <select id="listByClassId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM class_quiz
+        WHERE class_id = #{classId} AND enabled = true
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="queryById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM class_quiz
+        WHERE id = #{id}
+    </select>
+
+    <insert id="create" parameterType="cn.linter.learning.course.entity.ClassQuiz" useGeneratedKeys="true" keyProperty="quiz.id">
+        INSERT INTO class_quiz (class_id, title, description, question_count, duration, attempt_count, enabled, create_time, update_time, creator, updater)
+        VALUES (#{quiz.classId}, #{quiz.title}, #{quiz.description}, #{quiz.questionCount}, #{quiz.duration}, #{quiz.attemptCount}, #{quiz.enabled}, #{quiz.createTime}, #{quiz.updateTime}, #{quiz.creator}, #{quiz.updater})
+    </insert>
+
+    <update id="update" parameterType="cn.linter.learning.course.entity.ClassQuiz">
+        UPDATE class_quiz
+        <set>
+            <if test="quiz.title != null">
+                title = #{quiz.title},
+            </if>
+            <if test="quiz.description != null">
+                description = #{quiz.description},
+            </if>
+            <if test="quiz.questionCount != null">
+                question_count = #{quiz.questionCount},
+            </if>
+            <if test="quiz.duration != null">
+                duration = #{quiz.duration},
+            </if>
+            <if test="quiz.enabled != null">
+                enabled = #{quiz.enabled},
+            </if>
+            <if test="quiz.updateTime != null">
+                update_time = #{quiz.updateTime},
+            </if>
+            <if test="quiz.updater != null">
+                updater = #{quiz.updater},
+            </if>
+        </set>
+        WHERE id = #{quiz.id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM class_quiz WHERE id = #{id}
+    </delete>
+
+    <update id="incrementAttemptCount">
+        UPDATE class_quiz SET attempt_count = attempt_count + 1 WHERE id = #{id}
+    </update>
+
+</mapper>

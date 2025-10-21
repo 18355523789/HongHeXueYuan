@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.linter.learning.course.dao.ClassDao">
+
+    <resultMap id="BaseResultMap" type="cn.linter.learning.course.entity.Class">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="description" property="description"/>
+        <result column="cover_picture" property="coverPicture"/>
+        <result column="price" property="price"/>
+        <result column="course_count" property="courseCount"/>
+        <result column="student_count" property="studentCount"/>
+        <result column="average_score" property="averageScore"/>
+        <result column="enabled" property="enabled"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="updater" property="updater"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, name, description, cover_picture, price, course_count, student_count, average_score, enabled, create_time, update_time, creator, updater
+    </sql>
+
+    <select id="queryById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM class
+        WHERE id = #{id}
+    </select>
+
+    <select id="list" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM class
+        <where>
+            <if test="enabled != null">
+                AND enabled = #{enabled}
+            </if>
+        </where>
+        <choose>
+            <when test="orderBy == 'average_score'">
+                ORDER BY average_score DESC, create_time DESC
+            </when>
+            <when test="orderBy == 'create_time'">
+                ORDER BY create_time DESC
+            </when>
+            <otherwise>
+                ORDER BY create_time DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="create" parameterType="cn.linter.learning.course.entity.Class" useGeneratedKeys="true" keyProperty="classEntity.id">
+        INSERT INTO class (name, description, cover_picture, price, course_count, student_count, average_score, enabled, create_time, update_time, creator, updater)
+        VALUES (#{classEntity.name}, #{classEntity.description}, #{classEntity.coverPicture}, #{classEntity.price}, #{classEntity.courseCount}, #{classEntity.studentCount}, #{classEntity.averageScore}, #{classEntity.enabled}, #{classEntity.createTime}, #{classEntity.updateTime}, #{classEntity.creator}, #{classEntity.updater})
+    </insert>
+
+    <update id="update" parameterType="cn.linter.learning.course.entity.Class">
+        UPDATE class
+        <set>
+            <if test="classEntity.name != null">
+                name = #{classEntity.name},
+            </if>
+            <if test="classEntity.description != null">
+                description = #{classEntity.description},
+            </if>
+            <if test="classEntity.coverPicture != null">
+                cover_picture = #{classEntity.coverPicture},
+            </if>
+            <if test="classEntity.price != null">
+                price = #{classEntity.price},
+            </if>
+            <if test="classEntity.courseCount != null">
+                course_count = #{classEntity.courseCount},
+            </if>
+            <if test="classEntity.studentCount != null">
+                student_count = #{classEntity.studentCount},
+            </if>
+            <if test="classEntity.averageScore != null">
+                average_score = #{classEntity.averageScore},
+            </if>
+            <if test="classEntity.enabled != null">
+                enabled = #{classEntity.enabled},
+            </if>
+            <if test="classEntity.updateTime != null">
+                update_time = #{classEntity.updateTime},
+            </if>
+            <if test="classEntity.updater != null">
+                updater = #{classEntity.updater},
+            </if>
+        </set>
+        WHERE id = #{classEntity.id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM class WHERE id = #{id}
+    </delete>
+
+    <update id="incrementStudentCount">
+        UPDATE class SET student_count = student_count + 1 WHERE id = #{id}
+    </update>
+
+    <update id="updateAverageScore">
+        UPDATE class SET average_score = #{averageScore} WHERE id = #{id}
+    </update>
+
+</mapper>

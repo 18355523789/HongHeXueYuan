@@ -1,0 +1,13 @@
+-- 公司宣傳圖資料表
+CREATE TABLE IF NOT EXISTS banner (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  url VARCHAR(255) NOT NULL COMMENT '圖片URL',
+  link VARCHAR(255) NULL COMMENT '點擊跳轉鏈接',
+  title VARCHAR(100) NULL COMMENT '標題或描述',
+  sort INT NOT NULL DEFAULT 0 COMMENT '排序，越小越靠前',
+  enabled TINYINT(1) NOT NULL DEFAULT 1 COMMENT '是否啟用',
+  create_time DATETIME NOT NULL,
+  update_time DATETIME NOT NULL
+) COMMENT='公司宣傳圖';
+
+

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.linter.learning.course.dao.UserQuizRecordDao">
+
+    <resultMap type="cn.linter.learning.course.entity.UserQuizRecord" id="UserQuizRecordMap">
+        <result property="id" column="id"/>
+        <result property="userName" column="user_name"/>
+        <result property="questionId" column="question_id"/>
+        <result property="userAnswer" column="user_answer"/>
+        <result property="isCorrect" column="is_correct"/>
+        <result property="answerTime" column="answer_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <!--通过ID查询单个记录-->
+    <select id="selectById" resultMap="UserQuizRecordMap">
+        select id, user_name, question_id, user_answer, is_correct, answer_time, create_time, update_time
+        from user_quiz_record
+        where id = #{id}
+    </select>
+
+    <!--通过用户名查询所有记录-->
+    <select id="listByUserName" resultMap="UserQuizRecordMap">
+        select id, user_name, question_id, user_answer, is_correct, answer_time, create_time, update_time
+        from user_quiz_record
+        where user_name = #{userName}
+        order by answer_time desc
+    </select>
+
+    <!--通过题目ID查询所有记录-->
+    <select id="listByQuestionId" resultMap="UserQuizRecordMap">
+        select id, user_name, question_id, user_answer, is_correct, answer_time, create_time, update_time
+        from user_quiz_record
+        where question_id = #{questionId}
+        order by answer_time desc
+    </select>
+
+    <!--通过用户名和题目ID查询记录-->
+    <select id="selectByUserNameAndQuestionId" resultMap="UserQuizRecordMap">
+        select id, user_name, question_id, user_answer, is_correct, answer_time, create_time, update_time
+        from user_quiz_record
+        where user_name = #{userName} and question_id = #{questionId}
+    </select>
+
+    <!--插入单个记录-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into user_quiz_record(user_name, question_id, user_answer, is_correct, answer_time, create_time, update_time)
+        values (#{userName}, #{questionId}, #{userAnswer}, #{isCorrect}, #{answerTime}, #{createTime}, #{updateTime})
+    </insert>
+
+    <!--更新记录-->
+    <update id="update">
+        update user_quiz_record
+        set
+        <if test="userName != null and userName != ''">
+            user_name = #{userName},
+        </if>
+        <if test="questionId != null">
+            question_id = #{questionId},
+        </if>
+        <if test="userAnswer != null">
+            user_answer = #{userAnswer},
+        </if>
+        <if test="isCorrect != null">
+            is_correct = #{isCorrect},
+        </if>
+        <if test="answerTime != null">
+            answer_time = #{answerTime},
+        </if>
+        update_time = #{updateTime}
+        where id = #{id}
+    </update>
+
+    <!--删除记录-->
+    <delete id="delete">
+        delete
+        from user_quiz_record
+        where id = #{id}
+    </delete>
+
+</mapper>

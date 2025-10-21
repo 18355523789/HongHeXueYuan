@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.linter.learning.course.dao.ClassCourseDao">
+
+    <resultMap id="BaseResultMap" type="cn.linter.learning.course.entity.ClassCourse">
+        <id column="id" property="id"/>
+        <result column="class_id" property="classId"/>
+        <result column="course_id" property="courseId"/>
+        <result column="order_index" property="orderIndex"/>
+        <result column="enabled" property="enabled"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="creator" property="creator"/>
+        <result column="updater" property="updater"/>
+    </resultMap>
+
+    <resultMap id="WithCourseResultMap" type="cn.linter.learning.course.entity.ClassCourse" extends="BaseResultMap">
+        <association property="course" javaType="cn.linter.learning.course.entity.Course">
+            <id column="course_id" property="id"/>
+            <result column="course_name" property="name"/>
+            <result column="course_description" property="description"/>
+            <result column="course_cover_picture" property="coverPicture"/>
+            <result column="course_price" property="price"/>
+            <result column="course_average_score" property="averageScore"/>
+        </association>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, class_id, course_id, order_index, enabled, create_time, update_time, creator, updater
+    </sql>
+
+    <select id="listByClassId" resultMap="WithCourseResultMap">
+        SELECT
+        cc.id, cc.class_id, cc.course_id, cc.order_index, cc.enabled, cc.create_time, cc.update_time, cc.creator, cc.updater,
+        c.name as course_name, c.description as course_description, c.cover_picture as course_cover_picture, c.price as course_price, c.average_score as course_average_score
+        FROM class_course cc
+        LEFT JOIN course c ON cc.course_id = c.id
+        WHERE cc.class_id = #{classId} AND cc.enabled = true
+        ORDER BY cc.order_index ASC
+    </select>
+
+    <insert id="create" parameterType="cn.linter.learning.course.entity.ClassCourse" useGeneratedKeys="true" keyProperty="classCourse.id">
+        INSERT INTO class_course (class_id, course_id, order_index, enabled, create_time, update_time, creator, updater)
+        VALUES (#{classCourse.classId}, #{classCourse.courseId}, #{classCourse.orderIndex}, #{classCourse.enabled}, #{classCourse.createTime}, #{classCourse.updateTime}, #{classCourse.creator}, #{classCourse.updater})
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM class_course WHERE class_id = #{classId} AND course_id = #{courseId}
+    </delete>
+
+    <delete id="deleteByClassId">
+        DELETE FROM class_course WHERE class_id = #{classId}
+    </delete>
+
+</mapper>

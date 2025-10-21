@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.linter.learning.course.dao.QuizQuestionDao">
+
+    <resultMap type="cn.linter.learning.course.entity.QuizQuestion" id="QuizQuestionMap">
+        <result property="id" column="id"/>
+        <result property="courseId" column="course_id"/>
+        <result property="questionText" column="question_text"/>
+        <result property="questionType" column="question_type"/>
+        <result property="correctAnswer" column="correct_answer"/>
+        <result property="explanation" column="explanation"/>
+        <result property="difficultyLevel" column="difficulty_level"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <!--通过ID查询单个题目-->
+    <select id="selectById" resultMap="QuizQuestionMap">
+        select id, course_id, question_text, question_type, correct_answer, explanation, difficulty_level, create_time, update_time
+        from quiz_question
+        where id = #{id}
+    </select>
+
+    <!--通过课程ID查询所有题目-->
+    <select id="listByCourseId" resultMap="QuizQuestionMap">
+        select id, course_id, question_text, question_type, correct_answer, explanation, difficulty_level, create_time, update_time
+        from quiz_question
+        <where>
+            <if test="courseId != null">
+                and course_id = #{courseId}
+            </if>
+            <if test="difficultyLevel != null">
+                and difficulty_level = #{difficultyLevel}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <!--通过课程ID随机查询指定数量的题目-->
+    <select id="listRandomByCourseId" resultMap="QuizQuestionMap">
+        select id, course_id, question_text, question_type, correct_answer, explanation, difficulty_level, create_time, update_time
+        from quiz_question
+        where course_id = #{courseId}
+        <if test="difficultyLevel != null">
+            and difficulty_level = #{difficultyLevel}
+        </if>
+        order by rand()
+        limit #{limit}
+    </select>
+
+    <!--插入单个题目-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into quiz_question(course_id, question_text, question_type, correct_answer, explanation, difficulty_level, create_time, update_time)
+        values (#{courseId}, #{questionText}, #{questionType}, #{correctAnswer}, #{explanation}, #{difficultyLevel}, #{createTime}, #{updateTime})
+    </insert>
+
+    <!--更新题目-->
+    <update id="update">
+        update quiz_question
+        set
+        <if test="courseId != null">
+            course_id = #{courseId},
+        </if>
+        <if test="questionText != null and questionText != ''">
+            question_text = #{questionText},
+        </if>
+        <if test="questionType != null and questionType != ''">
+            question_type = #{questionType},
+        </if>
+        <if test="correctAnswer != null and correctAnswer != ''">
+            correct_answer = #{correctAnswer},
+        </if>
+        <if test="explanation != null">
+            explanation = #{explanation},
+        </if>
+        <if test="difficultyLevel != null">
+            difficulty_level = #{difficultyLevel},
+        </if>
+        update_time = #{updateTime}
+        where id = #{id}
+    </update>
+
+    <!--删除题目-->
+    <delete id="delete">
+        delete
+        from quiz_question
+        where id = #{id}
+    </delete>
+
+</mapper>

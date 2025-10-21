@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.linter.learning.course.dao.BannerDao">
+
+    <resultMap id="BannerMap" type="cn.linter.learning.course.entity.Banner">
+        <result property="id" column="id"/>
+        <result property="url" column="url"/>
+        <result property="link" column="link"/>
+        <result property="title" column="title"/>
+        <result property="sort" column="sort"/>
+        <result property="enabled" column="enabled"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="selectById" resultMap="BannerMap">
+        select id, url, link, title, sort, enabled, create_time, update_time
+        from banner
+        where id = #{id}
+    </select>
+
+    <select id="list" resultMap="BannerMap">
+        select id, url, link, title, sort, enabled, create_time, update_time
+        from banner
+        <if test="enabled != null">
+            where enabled = #{enabled}
+        </if>
+        order by sort asc, create_time desc
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into banner(url, link, title, sort, enabled, create_time, update_time)
+        values(#{url}, #{link}, #{title}, #{sort}, #{enabled}, #{createTime}, #{updateTime})
+    </insert>
+
+    <update id="update">
+        update banner
+        set
+            <if test="url != null and url != ''">url = #{url},</if>
+            <if test="link != null">link = #{link},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="enabled != null">enabled = #{enabled},</if>
+            update_time = #{updateTime}
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        delete from banner where id = #{id}
+    </delete>
+
+</mapper>
+
+
